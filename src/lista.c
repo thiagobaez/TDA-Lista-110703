@@ -58,7 +58,7 @@ lista_t *lista_crear()
 
 lista_t *lista_insertar(lista_t *lista, void *elemento)
 {
-	if(lista==NULL || elemento==NULL){
+	if(lista==NULL){
 		return NULL;
 	}
 	nodo_t* ultimo_nodo;
@@ -88,7 +88,7 @@ lista_t *lista_insertar(lista_t *lista, void *elemento)
 lista_t *lista_insertar_en_posicion(lista_t *lista, void *elemento,
 				    size_t posicion)
 {
-	if(lista==NULL || elemento==NULL){
+	if(lista==NULL){
 		return NULL;
 	}
 
@@ -212,7 +212,7 @@ void *lista_elemento_en_posicion(lista_t *lista, size_t posicion)
 void *lista_buscar_elemento(lista_t *lista, int (*comparador)(void *, void *),
 			    void *contexto)
 {	
-	if(lista_vacia(lista) || comparador==NULL || contexto==NULL){
+	if(lista_vacia(lista) || comparador==NULL){
 	return NULL;
 	}
 	
@@ -375,7 +375,7 @@ size_t lista_con_cada_elemento(lista_t *lista, bool (*funcion)(void *, void *),
 {	
 	size_t elementos_procesados = 0;
 
-	if (lista == NULL || funcion == NULL || contexto==NULL) {
+	if (lista == NULL || funcion == NULL) {
         return elementos_procesados;
     }
 
