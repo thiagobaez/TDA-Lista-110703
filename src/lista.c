@@ -375,7 +375,7 @@ size_t lista_con_cada_elemento(lista_t *lista, bool (*funcion)(void *, void *),
 {	
 	size_t elementos_procesados = 0;
 
-	if (lista == NULL || funcion == NULL) {
+	if (lista_vacia(lista) || funcion == NULL) {
         return elementos_procesados;
     }
 
