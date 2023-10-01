@@ -229,7 +229,9 @@ Explica y analiza las diferencias de complejidad entre las implementaciones de l
 #### Vector Dinámico:
 
 **Insertar en el Medio**: Insertar en el medio de un vector dinámico generalmente tiene una complejidad de tiempo lineal O(n) en el peor de los casos, esto se debe a que en un vector dinámico, los elementos están almacenados en un bloque contiguo de memoria, y la inserción en el medio implica desplazar todos los elementos posteriores para hacer espacio para el nuevo elemento.
+
 **Obtener en el Medio**: Obtener el elemento en el medio es una operación de tiempo constante O(1).
+
 **Eliminar en el Medio**: La eliminación en el medio tiene una complejidad de tiempo lineal O(n) en el peor de los casos, ya que todos los elementos después de la posición deseada deben desplazarse una posición hacia la izquierda.
 
 
