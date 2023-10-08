@@ -10,12 +10,26 @@ typedef struct nodo {
 
 struct lista {
 	nodo_t *nodo_inicio;
+	nodo_t *nodo_final;
 	size_t cantidad;
 };
 
 struct lista_iterador {
 	nodo_t *actual;
 };
+
+nodo_t *crear_nodo(void *elemento)
+{
+	nodo_t *nuevo_nodo = calloc(1, sizeof(nodo_t));
+
+	if (nuevo_nodo == NULL) {
+		return NULL;
+	}
+
+	nuevo_nodo->elemento = elemento;
+
+	return nuevo_nodo;
+}
 
 nodo_t *recorrer_lista_hasta(lista_t *lista, size_t posicion)
 {
@@ -32,27 +46,9 @@ nodo_t *recorrer_lista_hasta(lista_t *lista, size_t posicion)
 	return nodo_actual;
 }
 
-nodo_t *recorrer_hasta_ultimo_nodo(lista_t *lista)
-{
-	nodo_t *nodo_actual = lista->nodo_inicio;
-	while (nodo_actual->siguiente != NULL) {
-		nodo_actual = nodo_actual->siguiente;
-	}
-	return nodo_actual;
-}
-
 lista_t *lista_crear()
 {
-	lista_t *lista = (lista_t *)malloc(sizeof(lista_t));
-
-	if (lista == NULL) {
-		return NULL;
-	}
-
-	lista->nodo_inicio = NULL;
-	lista->cantidad = 0;
-
-	return lista;
+	return calloc(1, sizeof(lista_t));
 }
 
 lista_t *lista_insertar(lista_t *lista, void *elemento)
@@ -60,23 +56,18 @@ lista_t *lista_insertar(lista_t *lista, void *elemento)
 	if (lista == NULL) {
 		return NULL;
 	}
-	nodo_t *ultimo_nodo;
-	nodo_t *nuevo_nodo;
-
-	nuevo_nodo = (nodo_t *)malloc(sizeof(nodo_t));
+	nodo_t *nuevo_nodo = crear_nodo(elemento);
 
 	if (nuevo_nodo == NULL) {
 		return NULL;
 	}
 
-	nuevo_nodo->elemento = elemento;
-	nuevo_nodo->siguiente = NULL;
-
 	if (lista->nodo_inicio == NULL) {
 		lista->nodo_inicio = nuevo_nodo;
+		lista->nodo_final = nuevo_nodo;
 	} else {
-		ultimo_nodo = recorrer_hasta_ultimo_nodo(lista);
-		ultimo_nodo->siguiente = nuevo_nodo;
+		lista->nodo_final->siguiente = nuevo_nodo;
+		lista->nodo_final = nuevo_nodo;
 	}
 
 	(lista->cantidad)++;
@@ -94,21 +85,17 @@ lista_t *lista_insertar_en_posicion(lista_t *lista, void *elemento,
 		return lista_insertar(lista, elemento);
 	}
 
-	nodo_t *nodo_actual;
-	nodo_t *nodo_a_insertar;
-
-	nodo_a_insertar = (nodo_t *)malloc(sizeof(nodo_t));
+	nodo_t *nodo_a_insertar = crear_nodo(elemento);
 
 	if (nodo_a_insertar == NULL) {
 		return NULL;
 	}
-	nodo_a_insertar->elemento = elemento;
 
 	if (posicion == 0) {
 		nodo_a_insertar->siguiente = lista->nodo_inicio;
 		lista->nodo_inicio = nodo_a_insertar;
 	} else {
-		nodo_actual = recorrer_lista_hasta(lista, posicion - 1);
+		nodo_t *nodo_actual = recorrer_lista_hasta(lista, posicion - 1);
 		nodo_a_insertar->siguiente = nodo_actual->siguiente;
 		nodo_actual->siguiente = nodo_a_insertar;
 	}
@@ -122,26 +109,25 @@ void *lista_quitar(lista_t *lista)
 	if (lista_vacia(lista)) {
 		return NULL;
 	}
-
-	nodo_t *actual = lista->nodo_inicio;
 	nodo_t *anterior = NULL;
-	void *dato_a_retornar;
 
-	while (actual->siguiente != NULL) {
-		anterior = actual;
-		actual = actual->siguiente;
+	if (lista->nodo_inicio != lista->nodo_final) {
+		anterior = recorrer_lista_hasta(lista, (lista->cantidad) - 2);
+	}
+
+	void *dato_a_retornar = lista->nodo_final->elemento;
+	free(lista->nodo_final);
+	lista->nodo_final = anterior;
+
+	if (anterior != NULL) {
+		lista->nodo_final->siguiente = NULL;
 	}
 
 	if (anterior == NULL) {
 		lista->nodo_inicio = NULL;
-	} else {
-		anterior->siguiente = NULL;
 	}
 
-	dato_a_retornar = actual->elemento;
-	free(actual);
 	(lista->cantidad)--;
-
 	return dato_a_retornar;
 }
 
@@ -155,9 +141,8 @@ void *lista_quitar_de_posicion(lista_t *lista, size_t posicion)
 		return lista_quitar(lista);
 	}
 
-	nodo_t *nodo_actual;
-	nodo_t *aux;
 	void *dato_a_retornar;
+	nodo_t *aux;
 
 	if (posicion == 0 || lista->nodo_inicio->siguiente == NULL) {
 		dato_a_retornar = lista->nodo_inicio->elemento;
@@ -165,7 +150,7 @@ void *lista_quitar_de_posicion(lista_t *lista, size_t posicion)
 		lista->nodo_inicio = lista->nodo_inicio->siguiente;
 		free(aux);
 	} else {
-		nodo_actual = recorrer_lista_hasta(lista, posicion - 1);
+		nodo_t *nodo_actual = recorrer_lista_hasta(lista, posicion - 1);
 		dato_a_retornar = nodo_actual->siguiente->elemento;
 		aux = nodo_actual->siguiente;
 		nodo_actual->siguiente = nodo_actual->siguiente->siguiente;
@@ -181,9 +166,8 @@ void *lista_elemento_en_posicion(lista_t *lista, size_t posicion)
 	if (lista_vacia(lista)) {
 		return NULL;
 	}
-	nodo_t *direccion_posicion_buscada;
-
-	direccion_posicion_buscada = recorrer_lista_hasta(lista, posicion);
+	nodo_t *direccion_posicion_buscada =
+		recorrer_lista_hasta(lista, posicion);
 
 	if (direccion_posicion_buscada == NULL) {
 		return NULL;
@@ -229,11 +213,7 @@ void *lista_ultimo(lista_t *lista)
 		return NULL;
 	}
 
-	nodo_t *ultimo_nodo;
-
-	ultimo_nodo = recorrer_hasta_ultimo_nodo(lista);
-
-	return ultimo_nodo->elemento;
+	return lista->nodo_final->elemento;
 }
 
 bool lista_vacia(lista_t *lista)

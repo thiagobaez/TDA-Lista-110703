@@ -31,9 +31,9 @@ Para el funcionamiento del TDA Lista - Pila - Cola se procede a dar una explicac
 #### lista_crear()
 Esta función es la encargada de crear la lista en el heap y devolver un puntero a la lista creada. Para esto, se implementaron dos estructuras:
 - `struct nodo`: Esta estructura contiene un void*, puntero al elemento que el nodo almacena, y un nodo_t*, puntero al nodo que le sigue en la lista.
-- `struct lista`: Contiene un nodo_t* y un size_t, el primero almacena la dirección de memoria del primer elemento de la lista. El size_t almacena la cantidad de elementos que la lista contiene.
+- `struct lista`: Contiene dos nodo_t* y un size_t, el primero almacena la dirección de memoria del primer elemento de la lista, y el otro, la direccion de memoria del último elemento de la lista. El size_t almacena la cantidad de elementos que la lista contiene.
 
-Se reservan bloques de memoria para la lista en el heap utilizando `malloc()`. En el caso de no poder asignar un bloque de memoria, la función retorna `NULL`. Para poder devolver correctamente el puntero a lista al módulo invocante, primero se debe inicializar el nodo inicial en `NULL` y la cantidad de elementos de la lista en `0`.
+Se reservan bloques de memoria para la lista en el heap utilizando `calloc()`.Además de reservar bloques de memoria en el heap, `calloc()` inicializa las variables en 0 o NULL. En el caso de no poder asignar un bloque de memoria, la función retorna `NULL`.
 
 <div align="center">
 <img width="50%" src="img/lista_crear.png">
@@ -41,7 +41,7 @@ Se reservan bloques de memoria para la lista en el heap utilizando `malloc()`. E
 
 
 #### lista_insertar()
-Esta función se encarga de insertar elementos al final de la lista. Para ello, reserva un nodo en el heap y posteriormente, carga el nodo con el elemento que va a contener y su siguiente es `NULL`, ya que ahora es el nuevo nodo final. En el caso de que la lista esté vacía, se inserta el nuevo nodo en el inicio. Si la lista ya contiene elementos, se itera hasta el final y se lo inserta apuntando el último nodo de la lista al nuevo nodo a insertar, y el siguiente de ese a `NULL`.
+Esta función se encarga de insertar elementos al final de la lista. Para ello, reserva un nodo en el heap y posteriormente, carga el nodo con el elemento que va a contener y su siguiente es `NULL`, ya que ahora es el nuevo nodo final. En el caso de que la lista esté vacía, se inserta el nuevo nodo en el inicio. Si la lista ya contiene elementos, se lo inserta apuntando el último nodo de la lista al nuevo nodo a insertar, y el siguiente de ese a `NULL` (además se apunta el puntero nodo_final al elemento insertado).
 
 <div align="center">
 <img width="50%" src="img/lista_insertar.png">
@@ -184,7 +184,7 @@ Características: Una pila es un tipo de dato abstracto que sigue la normativa L
 
 Cola:
 
-Una cola es otro tipo de dato abstracto que sigue el principio F.I.F.O. (First In, First Out), el primer elemento en entrar es el último en salir. Esto significa que el primer elemento añadido a la cola es el primero en ser eliminado. Los elementos de una cola se añaden al final de la cola (final de la fila) y se eliminan desde el frente de la cola (frente de la fila).
+Una cola es otro tipo de dato abstracto que sigue el principio F.I.F.O. (First In, First Out), el primer elemento en entrar es el primero en salir. Esto significa que el primer elemento añadido a la cola es el primero en ser eliminado. Los elementos de una cola se añaden al final de la cola (final de la fila) y se eliminan desde el frente de la cola (frente de la fila).
 Operaciones comunes: Encolar (añadir un elemento al final de la cola) y desencolar (eliminar el elemento del frente de la cola) (ademas de crear,destruir,vacia,primer). Un ejemplo cotidiano para entender el funcionamiento de una cola puede ser cuando vamos al supermercado, el primero que sale de la cola es el primero que entró en ella.
 
 <div align="center">
@@ -202,7 +202,6 @@ Explica y analiza las diferencias de complejidad entre las implementaciones de l
 #### Lista simplemente enlazada
 
 **Insertar/Obtener/Eliminar al Inicio**: Estas operaciones de una lista simplemente enlazada son operaciones de complejidad O(1), ya que al no haber más elementos en la lista no se debe recorrer nada.
-
 
 #### Lista Doblemente Enlazada:
 
@@ -239,8 +238,8 @@ Explica y analiza las diferencias de complejidad entre las implementaciones de l
 
 #### Lista Simplemente Enlazada:
 
-**Insertar/Obtener/Eliminar al Final**: Estas operaciones al final en una lista simplemente enlazada es de complejidad O(n), ya que debes recorrer toda la lista para llegar al último nodo.
-
+**Insertar/Obtener al Final**: Estas operaciones al final en una lista simplemente enlazada generalmente es de complejidad O(n), pero en mi caso, tengo un puntero al nodo final, por lo que estas operaciones resultan en mi código O(1).
+**Eliminar al Final**: Esta operación es O(n), ya que tengo que recorrer todos los nodos para apuntar el anteúltimo a NULL.
 
 #### Lista Doblemente Enlazada:
 
@@ -261,7 +260,7 @@ La complejidad de crear una pila vacía es O(1), el bloque se ejecuta una sola v
 
 #### pila_apilar()
 
-La complejidad de apilar (push) es O(1), ya que se tiene que insertar el elemento en el tope de la pila, apuntando el nuevo tope al elemento insertado sin la necesidad de recorrer nada.
+La complejidad de apilar (push) es O(1), ya que se tiene que insertar el elemento en el tope de la pila sin la necesidad de recorrer nada.
 
 #### pila_desapilar()
 
